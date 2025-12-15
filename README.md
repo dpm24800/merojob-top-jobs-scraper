@@ -1,235 +1,157 @@
-# **Merojob Top Jobs Scraper**
-
-Automated Python scraper that extracts **Top Jobs** listings from **Merojob.com** and exports them into CSV file.
-This tool helps developers, data analysts, and job seekers collect fresh job listings programmatically.
+# Top Jobs Scrapper
+A Python-based web scraping project that automatically collects **top job listings** from **Merojob.com**, stores them in CSV files, and keeps the data **updated, deduplicated, and sorted by deadline**. The scraper is designed to run **locally or automatically every hour using GitHub Actions**.
 
 ---
 
-## ⭐ **Features**
-* Scrapes **Top Jobs** from Merojob.com
-* Uses **Python + Requests / Selenium (your choice)**
-* Exports data to:
-  * ✔ CSV
-  * ✔ JSON
-  * ✔ Google Sheets
-* Handles pagination (if available)
-* Automatically cleans and structures job data
-* Built for automation (Cron, GitHub Actions, etc.)
+## 🚀 Features
+* Scrapes **Individual Job** listings from Merojob
+* Extracts:
+  * Job Title (Post)
+  * Company Name
+  * Experience Required
+  * Job Level
+  * Salary
+  * Application Deadline
+* Saves data into structured CSV files
+* Prevents **duplicate entries** (based on Post, Company, Deadline)
+* Automatically sorts jobs **by deadline**
+* Stores deadlines in **date format** for accurate sorting
+* Fully automated using **GitHub Actions (runs every hour)**
 
 ---
 
-## 📁 **Output Fields**
-Each job record typically includes:
+## 📁 Project Structure
 
-* Job Title
-* Company Name
-* Location
-* Salary (if available)
-* Experience Required
-* Education Level
-* Deadline
-* Job Link (direct)
-* Job ID
-* Category / Type
-
-*(Add/remove fields depending on your implementation.)*
-
----
-
-## 🛠️ **Tech Stack**
-
-* Python 3.8+
-* `requests` or `selenium` (based on your code)
-* `pandas` (for CSV/JSON exports)
-* `gspread` + Google Credentials (for Google Sheets export)
-
----
-
-# 🚀 **Getting Started**
-
-## **1. Clone the Repository**
-
-```bash
-git clone https://github.com/your-username/merojob-top-jobs-scraper.git
-cd merojob-top-jobs-scraper
+```
+Top-Jobs-Scrapper/
+│
+├── scraper.py              # Main scraping script
+├── requirements.txt        # Python dependencies
+├── README.md               # Project documentation
+├── .github/
+│   └── workflows/
+│       └── scrape.yml      # GitHub Actions workflow
+└── data/
+    ├── top_jobs.csv        # Main job listings
+    └── by_deadline.csv     # Jobs sorted by deadline
 ```
 
 ---
 
-## **2. Install Dependencies**
+## 🛠️ Tech Stack
+
+* **Python 3**
+* **Selenium** (Chrome WebDriver)
+* **CSV module** for data storage
+* **GitHub Actions** for automation
+
+---
+
+## ⚙️ Installation & Setup (Local)
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/dpm24800/top-jobs-scraper.git
+
+cd top-jobs-scrapper
+```
+
+### 2️⃣ Create Virtual Environment (Optional but Recommended)
+
+```bash
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+```
+
+### 3️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Your `requirements.txt` might include:
-
-```
-requests
-pandas
-gspread
-oauth2client
-selenium
-python-dotenv
-```
-
----
-
-# ⚙️ **Configuration**
-
-## **Google Sheets Setup (Optional)**
-
-If you want Google Sheets export:
-
-1. Create a Google Cloud Project
-2. Enable **Google Sheets API**
-3. Download `credentials.json`
-4. Save it in the project root
-5. Add your Sheets ID in `.env`
-
-Example `.env`:
-
-```
-GOOGLE_SHEET_ID=your_google_sheet_id_here
-```
-
----
-
-# ▶️ **Usage**
-
-## **Run the scraper**
+### 4️⃣ Run the Scraper
 
 ```bash
 python scraper.py
 ```
 
-## Example output:
-
-```
-Scraping Top Jobs...
-Found 42 jobs.
-Exporting to CSV...
-Exporting to JSON...
-Updating Google Sheet...
-Done.
-```
+CSV files will be created/updated inside the **data/** folder.
 
 ---
 
-# 📦 **Data Export**
+## 🤖 Automation with GitHub Actions
 
-### **CSV Output**
+This project is configured to run **automatically every hour** using GitHub Actions.
 
-File saved as:
+### Workflow Highlights
+* Uses **Ubuntu latest** runner
+* Installs Google Chrome & ChromeDriver
+* Runs the scraper in headless mode
+* Commits updated CSV files back to the repository
 
-```
-output/jobs.csv
-```
-
-### **JSON Output**
-
-File saved as:
-
-```
-output/jobs.json
-```
-
-### **Google Sheets**
-
-Data is appended or overwritten based on your configuration.
-
----
-
-# 📂 **Project Structure**
-
-```
-merojob-top-jobs-scraper/
-│
-├── scraper.py              # Main scraping script
-├── export_csv.py           # CSV export helper
-├── export_json.py          # JSON export helper
-├── export_gsheet.py        # Google Sheets helper
-│
-├── utils/
-│   ├── parser.py           # Parse and clean job data
-│   ├── fetcher.py          # API/HTML fetching logic
-│
-├── credentials.json        # (ignored in .gitignore)
-├── .env                    # API keys & config
-├── requirements.txt
-└── README.md
-```
-
----
-
-# 🧪 **Example Code Snippet**
-
-*(Replace with your actual scraper logic)*
-
-```python
-from utils.fetcher import fetch_jobs
-from utils.parser import clean_data
-from export_csv import export_csv
-from export_json import export_json
-from export_gsheet import export_gsheet
-
-jobs = fetch_jobs()
-cleaned_jobs = clean_data(jobs)
-
-export_csv(cleaned_jobs, "output/jobs.csv")
-export_json(cleaned_jobs, "output/jobs.json")
-export_gsheet(cleaned_jobs)
-
-print("Scraping Completed!")
-```
-
----
-
-# 🔄 **Automation (Optional)**
-
-### **Run daily using GitHub Actions**
-
-Create `.github/workflows/scraper.yml`:
+### Cron Schedule
 
 ```yaml
-name: Daily Scraper
-on:
-  schedule:
-    - cron: "0 */6 * * *"   # every 6 hours
-jobs:
-  run:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.10
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run scraper
-        run: python scraper.py
+schedule:
+  - cron: '0 * * * *'   # Runs every hour
 ```
 
----
-
-# 📜 **License**
-
-MIT License – feel free to use, modify, and distribute.
+> ⚠️ Make sure your script uses **headless Chrome** for GitHub Actions.
 
 ---
 
-# 🤝 **Contributing**
-Pull requests are welcome!
-If you'd like to add features (like notifications or database storage), feel free to open an issue.
+## 📊 CSV Output Format
+
+### `top_jobs.csv`
+
+```
+Post,Company,Experience,Level,Salary,Deadline
+Senior Accountant,ABC Pvt Ltd,More than 2 years,Senior Level,Not Disclosed,2025-12-27
+```
+
+### `by_deadline.csv`
+
+* Same structure as `top_jobs.csv`
+* Sorted in **ascending order of deadline**
+* No duplicate records
 
 ---
 
-# 🙌 **Author**
+## 🔐 Anti-Duplication Logic
 
-**Dipak (Dpm IT)**
-GitHub: *your link here*
+A job is considered duplicate if all three match:
+
+* **Post**
+* **Company**
+* **Deadline**
+
+This ensures clean and reliable data even with frequent scraping.
+
+---
+
+## ⚠️ Disclaimer
+
+* This project is for **educational and personal use only**
+* Respect the website’s **robots.txt** and terms of service
+* Do not overload the website with excessive requests
+
+---
+
+<!-- ## 📌 Future Improvements
+
+* Save data to a database (PostgreSQL / SQLite)
+* Add email or Telegram notifications for new jobs
+* Build a simple dashboard (Streamlit / Django)
+* Add logging and error alerts -->
+
+---
+
+## 👤 Author
+
+**Dipak Pulami Magar**  
+Python | Web Scraping | Automation
+
+---
+
+⭐ If you find this project useful, consider giving it a star!
