@@ -1,5 +1,5 @@
 # Top Jobs Scrapper
-A Python-based web scraping project that automatically collects **top job listings** from **Merojob.com**, stores them in CSV files, and keeps the data **updated, deduplicated, and sorted by deadline**. The scraper is designed to run **locally or automatically every hour using GitHub Actions**.
+A Python-based web scraping project that automatically collects **top job listings** from a popular online job portal in Nepal, stores them in CSV files, and keeps the data **updated, deduplicated, and sorted by deadline**. The scraper is designed to run **locally or automatically every hour using GitHub Actions**.
 
 ---
 
